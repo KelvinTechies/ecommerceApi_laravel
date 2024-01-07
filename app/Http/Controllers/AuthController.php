@@ -26,8 +26,8 @@ class AuthController extends Controller
  */
 
         $fields = Validator::make($request->all(), [
-            'rName' => 'required|string',
-            'rEmail' => 'required|string|unique:users,email',
+            'registration_name' => 'required|string',
+            'registration_email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
         ]);
 
@@ -40,8 +40,8 @@ class AuthController extends Controller
         } else {
 
             $user = User::create([
-                'name' => $request->input('rName'),
-                'email' => $request->input('rEmail'),
+                'name' => $request->input('registration_name'),
+                'email' => $request->input('registration_email'),
                 'role' => 0,
                 'password' => bcrypt($request->input('password')),
             ]);
@@ -61,14 +61,20 @@ class AuthController extends Controller
 
     public function Login_in(Request $request)
     {
-        $fields = $request->validate([
-            'lEmail' => 'required|string',
-            'lPwd' => 'required|string',
+        $fields =  Validator::make($request->all(), [
+            'login_email' => 'required|string',
+            'login_password' => 'required|string',
         ]);
 
-        $user = User::where('email', $fields['lEmail'])->first();
+        if ($fields->fails()) {
+            return response()->json([
+                'status' => 422,
+                "errors" => $fields->messages()
+            ]);
+        }
+        $user = User::where('email', $request->login_email)->first();
 
-        if (!$user || !Hash::check($fields['lPwd'], $user->password)) {
+        if (!$user || !Hash::check($request->login_password, $user->password)) {
             return response([
                 'message' => "User not Found",
                 "status" => 401

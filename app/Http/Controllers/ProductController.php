@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategoryModel;
+use App\Models\Order;
 use App\Models\ProductModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -25,7 +26,14 @@ class ProductController extends Controller
         }
     }
 
-
+    public function allOrdersFOrAdmin()
+    {
+        $orders = Order::all();
+        return response()->json([
+            "orders" => $orders,
+            "status" => 200
+        ]);
+    }
 
     public function fetchSlug($slug)
     {

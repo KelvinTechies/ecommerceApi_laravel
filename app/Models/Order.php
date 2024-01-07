@@ -23,10 +23,11 @@ class Order extends Model
         'tracking_no',
         'status',
         'remark',
+        'zip'
     ];
 
 
-    public function orderitems()
+    public function order_items()
     {
         return $this->hasMany(OrderItemModel::class, 'order_id', 'id');
     }

@@ -69,6 +69,19 @@ class CategoryController extends Controller
         ]);
     }
 
+
+
+    public function viewAllCategory()
+    {
+        $category = CategoryModel::all();
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category
+        ]);
+    }
+
+
     public function getSingleCategory($id)
     {
         $category = CategoryModel::find($id);

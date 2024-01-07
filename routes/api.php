@@ -26,23 +26,24 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 // Route::get('/products/search/{name}', [ProductController::class, 'search']);
+// Route::get('/view_all_category/', [CategoryController::class, 'viewAllCategory']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
-Route::get('/products/{id}', [ProductController::class, 'show']);
+// Route::get('/products/{id}', s[ProductController::class, 'show']);
+Route::get('/all_category', [CategoryController::class, 'viewCategory']);
 Route::get('/products/products/{id}', [ProductController::class, 'publicShow']);
 Route::get('/products/relatedProducts/{id}', [ProductController::class, 'relatedProducts']);
 Route::get('/products/search/{name}', [ProductController::class, 'search']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'Login_in']);
 
-
-Route::post('/store-category', [CategoryController::class, 'store']);
-
+Route::get('/view-category', [CategoryController::class, 'viewCategory']);
 
 
 // Route::resource('products', ProductController::class);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/all_orders', [ProductController::class, 'allOrdersFOrAdmin']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/add_cart', [CartController::class, 'store']);
@@ -50,15 +51,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/cart', [CartController::class, 'index']);
     Route::delete('/cart_del/{id}', [CartController::class, 'destroy']);
     Route::post('/order', [OrderController::class, 'store']);
-    Route::get('/order', [OrderController::class, 'index']);
+    Route::get('/order', [OrderController::class, 'viewOrder']);
     Route::get('/validate-order', [OrderController::class, 'validateOrder']);
-    Route::get('/view-category', [CategoryController::class, 'viewCategory']);
     Route::get('/edit-category/{id}', [CategoryController::class, 'getSingleCategory']);
     Route::put('/update-category/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('/delete_category/{id}', [CategoryController::class, 'deleteCategory']);
-    Route::get('/all_category', [CategoryController::class, 'index']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::get('/products/category/{slug}', [ProductController::class, 'fetchSlug']);
     Route::get('/admin/products', [ProductController::class, 'index']);
+    Route::post('/store-category', [CategoryController::class, 'store']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
 });

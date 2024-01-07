@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('address');
             $table->string('city');
+            $table->string('zip');
             $table->string('country');
             $table->string('companyname')->nullable();
             $table->string('payment_id')->nullable();

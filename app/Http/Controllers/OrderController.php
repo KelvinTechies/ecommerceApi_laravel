@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CartModel;
 use App\Models\Order;
+use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\ProductModel;
 use Illuminate\Http\Request;
@@ -15,19 +16,31 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $user = auth()->user()->id;
+        if (auth('sanctum')->check()) {
+            $user = auth('sanctum')->user()->id;
+            if ($user) {
+                $order = OrderItemModel::where('user_id', $user)->first();
 
-        $order = Order::where('user_id', $user)->get();
-
-        return response([
-            $order,
-            $user
-        ]);
+                if ($order) {
+                    return response([
+                        "order" => $order,
+                        "user" => $user
+                    ]);
+                } else {
+                    return response([
+                        "status" => 400,
+                        "msg" => "Not FOund"
+                    ]);
+                }
+            }
+        }
     }
+
+
     public function store(Request $request)
     {
-        if (auth('santum')->check()) {
-            $user = auth('santum')->user()->id;
+        if (auth('sanctum')->check()) {
+            $user = auth('sanctum')->user()->id;
             $validator = Validator::make($request->all(), [
                 'firstname' => 'required|max:191',
                 'lastname' => 'required|max:191',
@@ -53,8 +66,9 @@ class OrderController extends Controller
                 $order->address = $request->address;
                 $order->zip = $request->zip;
                 $order->country = $request->country;
+                $order->city = $request->city;
                 $order->companyname = $request->companyname;
-                $order->payment_mode = $request->payment_mode;
+                // $order->payment_mode = $request->payment_mode;
                 $order->tracking_no = "SaS_EcOm" . rand(1111, 9999);
                 $order->save();
 
@@ -63,17 +77,19 @@ class OrderController extends Controller
                 $orderItems = [];
                 foreach ($cart as $item) {
                     $orderItems[] = [
-                        'product_id' => $item->product_models->product_id,
-                        'qty' => $item->product_qty,
-                        'price' => $item->product_models->price
+                        'product_id' => $item->product_id,
+                        'qty' => $item->product_models->qty,
+                        'price' => $item->product_models->selling_price,
+                        'user_id' =>  $user
+
                     ];
                 }
 
-                $order->orderitems()->createMany($orderItems);
+                $order->order_items()->createManyQuietly($orderItems);
                 CartModel::destroy($cart);
                 return response()->json([
-                    "status" => 200,
-                    "message" => "Order Placed Successfully"
+                    "status" => 201,
+                    "message" => "Order Placed Successfully",
                 ]);
                 /*  return response([
                     "order" => $order,
@@ -106,8 +122,8 @@ class OrderController extends Controller
 
     public function validateOrder(Request $request)
     {
-        if (auth('santum')->check()) {
-            $user = auth('santum')->user()->id;
+        if (auth('sanctum')->check()) {
+            $user = auth('sanctum')->user()->id;
             $validator = Validator::make($request->all(), [
                 'firstname' => 'required|max:191',
                 'lastname' => 'required|max:191',
