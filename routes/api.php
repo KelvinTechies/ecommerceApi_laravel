@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/products/search/{name}', [ProductController::class, 'search']);
 // Route::get('/view_all_category/', [CategoryController::class, 'viewAllCategory']);
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/category', [ProductController::class, 'viewCategory']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 // Route::get('/products/{id}', s[ProductController::class, 'show']);
 Route::get('/all_category', [CategoryController::class, 'viewCategory']);
@@ -38,9 +39,12 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'Login_in']);
 
 Route::get('/view-category', [CategoryController::class, 'viewCategory']);
+Route::get('/category', [CategoryController::class, 'viewAllCategory']);
 
 
 // Route::resource('products', ProductController::class);
+Route::get('/order', [OrderController::class, 'index']);
+Route::get('/orders', [ProductController::class, 'orderForLoggedInUsers']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/all_orders', [ProductController::class, 'allOrdersFOrAdmin']);
@@ -51,7 +55,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/cart', [CartController::class, 'index']);
     Route::delete('/cart_del/{id}', [CartController::class, 'destroy']);
     Route::post('/order', [OrderController::class, 'store']);
-    Route::get('/order', [OrderController::class, 'viewOrder']);
     Route::get('/validate-order', [OrderController::class, 'validateOrder']);
     Route::get('/edit-category/{id}', [CategoryController::class, 'getSingleCategory']);
     Route::put('/update-category/{id}', [CategoryController::class, 'updateCategory']);

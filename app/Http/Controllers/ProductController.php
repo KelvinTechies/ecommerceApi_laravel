@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CategoryModel;
 use App\Models\Order;
+use App\Models\OrderItemModel;
 use App\Models\ProductModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -33,6 +34,27 @@ class ProductController extends Controller
             "orders" => $orders,
             "status" => 200
         ]);
+    }
+    public function orderForLoggedInUsers()
+    {
+        if (auth('sanctum')->check()) {
+            $user = auth('sanctum')->user()->id;
+            if ($user) {
+                $order = OrderItemModel::where('user_id', $user)->first();
+
+                if ($order) {
+                    return response([
+                        "order" => $order,
+                        "user" => $user
+                    ]);
+                } else {
+                    return response([
+                        "status" => 400,
+                        "msg" => "Not FOund"
+                    ]);
+                }
+            }
+        }
     }
 
     public function fetchSlug($slug)
@@ -63,6 +85,18 @@ class ProductController extends Controller
             ]);
         }
     }
+
+    public function viewCategory()
+    {
+        $category = CategoryModel::all();
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category
+        ]);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */

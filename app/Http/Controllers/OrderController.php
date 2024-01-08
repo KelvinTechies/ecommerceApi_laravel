@@ -22,14 +22,17 @@ class OrderController extends Controller
                 $order = OrderItemModel::where('user_id', $user)->first();
 
                 if ($order) {
+                    $product = ProductModel::where('id', $order->product_id)->get();
                     return response([
                         "order" => $order,
-                        "user" => $user
+                        "user" => $user,
+                        "product" => $product,
+                        "status" => 200
                     ]);
                 } else {
                     return response([
-                        "status" => 400,
-                        "msg" => "Not FOund"
+                        "status" => 404,
+                        "msg" => "No Order has been made yet."
                     ]);
                 }
             }
