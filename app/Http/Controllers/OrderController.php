@@ -21,8 +21,9 @@ class OrderController extends Controller
             if ($user) {
                 $order = OrderItemModel::where('user_id', $user)->first();
 
+                $pro_id = $order['product_id'];
                 if ($order) {
-                    $product = ProductModel::where('id', $order->product_id)->get();
+                    $product = ProductModel::where('id', $pro_id)->get();
                     return response([
                         "order" => $order,
                         "user" => $user,
